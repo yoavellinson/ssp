@@ -36,11 +36,10 @@ x2 = x2_tmp[-1024:]
 
 
 
+#Q2b+c
 
-#Q2b
-
-def calc_spectrum(x,M=4096): #returns Sx_periodegram,Sx_corellogram, w - all the correct omegas
-    #periodegram
+def calc_spectrum(x,M=4096): #returns Sx_periodogram,Sx_correlogram, w - all the correct omegas
+    #periodogram
     x = np.pad(x,(0,int(M/2)+1-x.shape[0]),'constant')
     X = np.fft.fft(x,n=M) 
     Sx_per = (1/M)*(np.abs(X)**2)[:int(M/2)+1]
@@ -48,56 +47,33 @@ def calc_spectrum(x,M=4096): #returns Sx_periodegram,Sx_corellogram, w - all the
     #correlogram
     Rx_hat =Rxx_hat_b(x,two_sided=True)
     l0 = np.argmax(Rx_hat)
-    Sx_cor = [np.sum([Rx_hat[l]*np.exp(-1j*w*(l0-l)) for l in range(Rx_hat.shape[0])]) for w in w_M]
-    
+    # Sx_cor = [np.sum([Rx_hat[l]*np.exp(-1j*w*(l0-l)) for l in range(Rx_hat.shape[0])]) for w in w_M] #with a loop
+    w = np.concatenate((-w_M[::-1],w_M[1:])) #with matrix multipication
+    w_mat = np.repeat(w.reshape(w.shape[0],1),w.shape[0],axis=1)
+    l = np.zeros(w_mat.shape)
+    l[0,:] = np.arange(-int(M/2),int(M/2)+1,1)
+    wl = np.dot(w_mat,l)
+    Sx_cor = np.dot(np.exp(-1j*wl),Rx_hat).real[-2049:]
     return Sx_per,Sx_cor,w_M
 
 
 Sx1_per, Sx1_cor,w_1 = calc_spectrum(x1)
 Sx2_per, Sx2_cor,w_2= calc_spectrum(x2)
 
-fig,(ax1,ax2) = plt.subplots(nrows=1,ncols=2)
-ax1.plot(w_1,[Sx1_per[w] for w in range(len(w_1))],label = 'Sx1_periodegram($e^{jw} $)')
-ax1.plot(w_1,[Sx1_cor[w] for w in range(len(w_1))],label = 'Sx1_corellogram($e^{jw} $)')
-ax1.plot(w_1,Sxx1(w_1),label = 'Sxx1($e^{jw} $))')
+fig,(ax1,ax2) = plt.subplots(nrows=1,ncols=2,figsize=(15,13))
+ax1.plot(w_1,[Sx1_per[w] for w in range(len(w_1))],label = 'Sx1_periodogram($e^{jw} $)')
+ax1.plot(w_1,[Sx1_cor[w] for w in range(len(w_1))],label = 'Sx1_correlogram($e^{jw} $)')
+ax1.plot(w_1,Sxx1(w_1),label = 'Sxx1($e^{jw} $)')
 ax1.legend()
 ax1.title.set_text('$X_1$ Spectrum')
 
-ax2.plot(w_2,[Sx2_per[w] for w in range(len(w_2))],label = 'Sx2_periodegram($e^{jw} $)')
-ax2.plot(w_2,[Sx2_cor[w] for w in range(len(w_2))],label = 'Sx2_corellogram($e^{jw} $)')
-ax2.plot(w_2,Sxx2(w_2),label = 'Sxx2($e^{jw} $))')
+ax2.plot(w_2,[Sx2_per[w] for w in range(len(w_2))],label = 'Sx2_periodogram($e^{jw} $)')
+ax2.plot(w_2,[Sx2_cor[w] for w in range(len(w_2))],label = 'Sx2_correlogram($e^{jw} $)')
+ax2.plot(w_2,Sxx2(w_2),label = 'Sxx2($e^{jw} $)')
 ax2.legend()
 ax2.title.set_text('$X_2$ Spectrum')
+
+plt.subplots_adjust(wspace=0.4,
+                    hspace=0.4)
 plt.show()
-
-#old plots for x2,x2 and Rx1,Sx1
-
-# fig,(ax1,ax2) = plt.subplots(nrows=2,ncols=1)
-# ax1.plot(x1,label = 'x1[n]')
-# ax1.set_xlabel('n')
-# ax1.set_ylabel('x1[n]')
-# ax1.legend()
-# ax2.plot(x2,label = 'x2[n]')
-# ax2.legend()
-# ax2.set_xlabel('n')
-# ax2.set_ylabel('x2[n]')
-# plt.subplots_adjust(wspace=0.4,
-#                     hspace=0.4)
-# plt.show()
-
-   # plt.plot(w_M,[Sx_per[w] for w in range(len(w_M))],label = 'Sx_periodegram(exp(jw))')
-    # plt.plot(w,Sxx1(w),label = 'Sxx1(exp(jw))')
-    # plt.legend()
-    # plt.close()
-
-    # Q2c
-    
-
-    # plt.plot(Rx_hat,label = 'Rxx1(l)') 
-    # plt.legend()
-    # plt.show()
-
-    # plt.plot(w_M,[Sx1_cor[w] for w in range(len(w_M))],label = 'Sx1_corelogram(exp(jw))')
-    # plt.plot(w,Sxx1(w),label = 'Sxx1(exp(jw))')
-    # plt.legend()
-    # plt.show()
+# plt.savefig('pics/q2.png')
