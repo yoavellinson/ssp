@@ -34,7 +34,7 @@ def gen_signals(sigma_w1=np.sqrt(1/26),n1=1024,sigma_w2=np.sqrt(0.86),n2=2048): 
     x2 = x2_tmp[-1024:]
     return x1,x2
 
-Mc = 100
+Mc = 1
 Sx1_per = np.empty((Mc,2049))
 Sx1_cor = np.empty((Mc,2049))
 Sx1_bartlet_64 = np.empty((Mc,2049))
@@ -77,23 +77,28 @@ for i in tqdm(range(Mc)):
 
 #analysing stats
 #x1
-Sx1_per_bar,Sx1_per_bias,Sx1_per_var,Sx1_per_mse = get_all_stats(Sx1_per,Sx1_analytic)
-Sx1_cor_bar,Sx1_cor_bias,Sx1_cor_var,Sx1_cor_mse = get_all_stats(Sx1_cor,Sx1_analytic)
-Sx1_bartlet_64_bar,Sx1_bartlet_64_bias,Sx1_bartlet_64_var,Sx1_bartlet_64_mse = get_all_stats(Sx1_bartlet_64,Sx1_analytic)
-Sx1_bartlet_16_bar,Sx1_bartlet_16_bias,Sx1_bartlet_16_var,Sx1_bartlet_16_mse = get_all_stats(Sx1_bartlet_16,Sx1_analytic)
-Sx1_welch_64_bar,Sx1_welch_64_bias,Sx1_welch_64_var,Sx1_welch_64_mse = get_all_stats(Sx1_welch_64,Sx1_analytic)
-Sx1_welch_16_bar,Sx1_welch_16_bias,Sx1_welch_16_var,Sx1_welch_16_mse = get_all_stats(Sx1_welch_16,Sx1_analytic)
-Sx1_bt_4_bar,Sx1_bt_4_bias,Sx1_bt_4_var,Sx1_bt_4_mse = get_all_stats(Sx1_bt_4,Sx1_analytic)
-Sx1_bt_2_bar,Sx1_bt_2_bias,Sx1_bt_2_var,Sx1_bt_2_mse = get_all_stats(Sx1_bt_2,Sx1_analytic)
+Sx1_per_bar,Sx1_per_bias,Sx1_per_var,Sx1_per_mse,Sx1_per_total_bias,Sx1_per_total_var,Sx1_per_total_mse = get_all_stats(Sx1_per,Sx1_analytic)
+Sx1_cor_bar,Sx1_cor_bias,Sx1_cor_var,Sx1_cor_mse,Sx1_cor_total_bias,Sx1_cor_total_var,Sx1_cor_total_mse = get_all_stats(Sx1_cor,Sx1_analytic)
+Sx1_bartlet_64_bar,Sx1_bartlet_64_bias,Sx1_bartlet_64_var,Sx1_bartlet_64_mse,Sx1_bartlet_64_total_bias,Sx1_bartlet_64_total_var,Sx1_bartlet_64_total_mse = get_all_stats(Sx1_bartlet_64,Sx1_analytic)
+Sx1_bartlet_16_bar,Sx1_bartlet_16_bias,Sx1_bartlet_16_var,Sx1_bartlet_16_mse,Sx1_bartlet_16_total_bias,Sx1_bartlet_16_total_var,Sx1_bartlet_16_total_mse = get_all_stats(Sx1_bartlet_16,Sx1_analytic)
+Sx1_welch_64_bar,Sx1_welch_64_bias,Sx1_welch_64_var,Sx1_welch_64_mse,Sx1_welch_64_total_bias,Sx1_welch_64_total_var,Sx1_welch_64_total_mse = get_all_stats(Sx1_welch_64,Sx1_analytic)
+Sx1_welch_16_bar,Sx1_welch_16_bias,Sx1_welch_16_var,Sx1_welch_16_mse,Sx1_welch_16_total_bias,Sx1_welch_16_total_var,Sx1_welch_16_total_mse = get_all_stats(Sx1_welch_16,Sx1_analytic)
+Sx1_bt_4_bar,Sx1_bt_4_bias,Sx1_bt_4_var,Sx1_bt_4_mse,Sx1_bt_4_total_bias,Sx1_bt_4_total_var,Sx1_bt_4_total_mse = get_all_stats(Sx1_bt_4,Sx1_analytic)
+Sx1_bt_2_bar,Sx1_bt_2_bias,Sx1_bt_2_var,Sx1_bt_2_mse,Sx1_bt_2_total_bias,Sx1_bt_2_total_var,Sx1_bt_2_total_mse = get_all_stats(Sx1_bt_2,Sx1_analytic)
 #x2
-Sx2_per_bar,Sx2_per_bias,Sx2_per_var,Sx2_per_mse = get_all_stats(Sx2_per,Sx2_analytic)
-Sx2_cor_bar,Sx2_cor_bias,Sx2_cor_var,Sx2_cor_mse = get_all_stats(Sx2_cor,Sx2_analytic)
-Sx2_bartlet_64_bar,Sx2_bartlet_64_bias,Sx2_bartlet_64_var,Sx2_bartlet_64_mse = get_all_stats(Sx2_bartlet_64,Sx2_analytic)
-Sx2_bartlet_16_bar,Sx2_bartlet_16_bias,Sx2_bartlet_16_var,Sx2_bartlet_16_mse = get_all_stats(Sx2_bartlet_16,Sx2_analytic)
-Sx2_welch_64_bar,Sx2_welch_64_bias,Sx2_welch_64_var,Sx2_welch_64_mse = get_all_stats(Sx2_welch_64,Sx2_analytic)
-Sx2_welch_16_bar,Sx2_welch_16_bias,Sx2_welch_16_var,Sx2_welch_16_mse = get_all_stats(Sx2_welch_16,Sx2_analytic)
-Sx2_bt_4_bar,Sx2_bt_4_bias,Sx2_bt_4_var,Sx2_bt_4_mse = get_all_stats(Sx2_bt_4,Sx2_analytic)
-Sx2_bt_2_bar,Sx2_bt_2_bias,Sx2_bt_2_var,Sx2_bt_2_mse = get_all_stats(Sx2_bt_2,Sx2_analytic)
+Sx2_per_bar,Sx2_per_bias,Sx2_per_var,Sx2_per_mse,Sx2_per_total_bias,Sx2_per_total_var,Sx2_per_total_mse = get_all_stats(Sx2_per,Sx2_analytic)
+Sx2_cor_bar,Sx2_cor_bias,Sx2_cor_var,Sx2_cor_mse,Sx2_cor_total_bias,Sx2_cor_total_var,Sx2_cor_total_mse = get_all_stats(Sx2_cor,Sx2_analytic)
+Sx2_bartlet_64_bar,Sx2_bartlet_64_bias,Sx2_bartlet_64_var,Sx2_bartlet_64_mse,Sx2_bartlet_64_total_bias,Sx2_bartlet_64_total_var,Sx2_bartlet_64_total_mse = get_all_stats(Sx2_bartlet_64,Sx2_analytic)
+Sx2_bartlet_16_bar,Sx2_bartlet_16_bias,Sx2_bartlet_16_var,Sx2_bartlet_16_mse,Sx2_bartlet_16_total_bias,Sx2_bartlet_16_total_var,Sx2_bartlet_16_total_mse = get_all_stats(Sx2_bartlet_16,Sx2_analytic)
+Sx2_welch_64_bar,Sx2_welch_64_bias,Sx2_welch_64_var,Sx2_welch_64_mse,Sx2_welch_64_total_bias,Sx2_welch_64_total_var,Sx2_welch_64_total_mse = get_all_stats(Sx2_welch_64,Sx2_analytic)
+Sx2_welch_16_bar,Sx2_welch_16_bias,Sx2_welch_16_var,Sx2_welch_16_mse,Sx2_welch_16_total_bias,Sx2_welch_16_total_var,Sx2_welch_16_total_mse = get_all_stats(Sx2_welch_16,Sx2_analytic)
+Sx2_bt_4_bar,Sx2_bt_4_bias,Sx2_bt_4_var,Sx2_bt_4_mse,Sx2_bt_4_total_bias,Sx2_bt_4_total_var,Sx2_bt_4_total_mse = get_all_stats(Sx2_bt_4,Sx2_analytic)
+Sx2_bt_2_bar,Sx2_bt_2_bias,Sx2_bt_2_var,Sx2_bt_2_mse,Sx2_bt_2_total_bias,Sx2_bt_2_total_var,Sx2_bt_2_total_mse = get_all_stats(Sx2_bt_2,Sx2_analytic)
+
+
+#q4 stats
+
+Sx1_per_total_bias = total_bias(Sx1_per_bias)
 
 
 #plots######

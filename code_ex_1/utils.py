@@ -25,12 +25,25 @@ def get_var(Sx,Sx_true,M=4096):
 def get_MSE(var,bias):
     return var + bias**2
 
+def total_bias(B):
+    return np.sum(B)/len(B)
+def total_var(var):
+    return np.sum(var)/len(var)
+def total_mse(mse):
+    return np.sum(mse)/len(mse)
+
 def get_all_stats(Sx,Sx_true,M=4096):
     Sx_bar = get_Sx_bar(Sx)
     B = get_bias(Sx_bar,Sx_true)
     var = get_var(Sx,Sx_true)
     mse = get_MSE(var,B)
-    return Sx_bar,B,var,mse
+    bias_total = total_bias(B)
+    mse_total = total_mse(mse)
+    var_total = total_var(var)
+    return Sx_bar,B,var,mse,bias_total,var_total,mse_total
+
+
+
 
 ## helper functions
 def create_wl_mat(M=4096):
