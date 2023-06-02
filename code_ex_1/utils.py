@@ -30,7 +30,7 @@ def get_MSE(var, bias):
 
 
 def total_bias(B):
-    return np.sum(B)/len(B)
+    return np.sum(B**2)/len(B)
 
 
 def total_var(var):

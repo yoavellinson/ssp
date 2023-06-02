@@ -58,7 +58,7 @@ def gen_signals(sigma_w1=np.sqrt(1/26), n1=1024, sigma_w2=np.sqrt(0.86), n2=1024
 #     return x1, x2
 
 
-Mc = 1
+Mc = 100
 Sx1_per = np.empty((Mc, 2049))
 Sx1_cor = np.empty((Mc, 2049))
 Sx1_bartlet_64 = np.empty((Mc, 2049))
