@@ -1,23 +1,41 @@
+########################################################################
+#                      Ssp 1 - Programing Assigment                   
+#   File Name: Spectral_estimation.py
+#   Content: main function and plots
+#
+#   Name: Yoav Ellinson                           Name: Chen Yaakov Sror
+#   Id: 206036949                                 Id:   203531645
+########################################################################
+
+########################################################################
+                        # Defines and Includes
+########################################################################
 import numpy as np
 import matplotlib.pyplot as plt
 from utils import *
 from tqdm import tqdm
 
-# Q1
 
+########################################################################
+#                            Question 1
+########################################################################
+
+# Calculating the spectrum for x_1 and x_2 with the results of the 
+# analytic calculation
 
 def Sxx1(w):
     return 1 + (9/13)*np.cos(w) - (4/13)*np.cos(2*w)
 
-
 def Sxx2(w):
     return 0.86/(np.abs(1-0.7*np.exp(-1j*w))**2)
-
 
 n = 2049
 w = np.linspace(0, np.pi, num=n)
 
-# Q2.a.1
+########################################################################
+#                            Question 2
+########################################################################
+# These values were calculated analyticly
 
 sigma_w1 = np.sqrt(1/26)
 sigma_w2 = np.sqrt(0.86)
@@ -25,23 +43,25 @@ sigma_w2 = np.sqrt(0.86)
 n1 = 1024
 n2 = 2048
 
-
-def gen_signals(sigma_w1=np.sqrt(1/26), n1=1024, sigma_w2=np.sqrt(0.86), n2=1024):  # for the question
-    w1 = np.random.normal(0, sigma_w1, n1)
-    x1 = np.array([w1[n]-3*w1[n-1]-4*w1[n-2] for n in range(n1)])
-
+def gen_signals(sigma_w1=np.sqrt(1/26), n1=1024, sigma_w2=np.sqrt(0.86), n2=1024):  # The default values are for the question
+    #   Generating n1 samples from a normal distribution by the x1 equation
+    w1 = np.random.normal(0, sigma_w1, n1)                                          
+    x1 = np.array([w1[n]-3*w1[n-1]-4*w1[n-2] for n in range(n1)])   
     w2 = np.random.normal(0, sigma_w2, n2)
 
+    # A Function to calculate the signal x2
     def gen_x2(x2, n):
         return 0.7*x2[n-1] + w2[n]
     x2_tmp = np.zeros(n2)
-    x2_tmp[-1] = -0.5880857651749811
+    x2_tmp[-1] = -0.5880857651749811    #initial value - explained in the report
     for n in range(1, n2):
         x2_tmp[n] = gen_x2(x2_tmp, n)
 
     return x1, x2_tmp
 
-
+########################################################################
+# This is the same function as gen signal but without initial values
+########################################################################
 # def gen_signals_old(sigma_w1=np.sqrt(1/26), n1=1024, sigma_w2=np.sqrt(0.86), n2=2048):  # for the question
 #     w1 = np.random.normal(0, sigma_w1, n1)
 #     x1 = np.array([w1[n]-3*w1[n-1]-4*w1[n-2] for n in range(n1)])
@@ -58,7 +78,10 @@ def gen_signals(sigma_w1=np.sqrt(1/26), n1=1024, sigma_w2=np.sqrt(0.86), n2=1024
 #     return x1, x2
 
 
+# Creating matricies that will hold the Monte Carlo result
+# Every Sx1/Sx2 Element will have Mc Rows and 2049 Cols.
 Mc = 100
+
 Sx1_per = np.empty((Mc, 2049))
 Sx1_cor = np.empty((Mc, 2049))
 Sx1_bartlet_64 = np.empty((Mc, 2049))
@@ -79,7 +102,11 @@ Sx2_bt_2 = np.empty((Mc, 2049))
 
 Sx1_analytic = Sxx1(w)
 Sx2_analytic = Sxx2(w)
-# getting all data:
+
+########################################################################
+# Generating all the data
+########################################################################
+
 for i in tqdm(range(Mc)):
     x1, x2 = gen_signals()
     Sx1_per[i], _ = calc_periodegram(x1)
@@ -99,8 +126,11 @@ for i in tqdm(range(Mc)):
     Sx2_bt_4[i], _ = calc_blackman_tukey(x2, L=4)
     Sx2_bt_2[i], w_M = calc_blackman_tukey(x2, L=2)
 
-# analysing stats
-# x1
+########################################################################
+# Analysing the Stats
+# For x1
+########################################################################
+
 Sx1_per_bar, Sx1_per_bias, Sx1_per_var, Sx1_per_mse, Sx1_per_total_bias, Sx1_per_total_var, Sx1_per_total_mse = get_all_stats(
     Sx1_per, Sx1_analytic)
 Sx1_cor_bar, Sx1_cor_bias, Sx1_cor_var, Sx1_cor_mse, Sx1_cor_total_bias, Sx1_cor_total_var, Sx1_cor_total_mse = get_all_stats(
@@ -117,7 +147,12 @@ Sx1_bt_4_bar, Sx1_bt_4_bias, Sx1_bt_4_var, Sx1_bt_4_mse, Sx1_bt_4_total_bias, Sx
     Sx1_bt_4, Sx1_analytic)
 Sx1_bt_2_bar, Sx1_bt_2_bias, Sx1_bt_2_var, Sx1_bt_2_mse, Sx1_bt_2_total_bias, Sx1_bt_2_total_var, Sx1_bt_2_total_mse = get_all_stats(
     Sx1_bt_2, Sx1_analytic)
-# x2
+
+########################################################################
+# Analysing the Stats
+# For x2
+########################################################################
+
 Sx2_per_bar, Sx2_per_bias, Sx2_per_var, Sx2_per_mse, Sx2_per_total_bias, Sx2_per_total_var, Sx2_per_total_mse = get_all_stats(
     Sx2_per, Sx2_analytic)
 Sx2_cor_bar, Sx2_cor_bias, Sx2_cor_var, Sx2_cor_mse, Sx2_cor_total_bias, Sx2_cor_total_var, Sx2_cor_total_mse = get_all_stats(
@@ -135,10 +170,15 @@ Sx2_bt_4_bar, Sx2_bt_4_bias, Sx2_bt_4_var, Sx2_bt_4_mse, Sx2_bt_4_total_bias, Sx
 Sx2_bt_2_bar, Sx2_bt_2_bias, Sx2_bt_2_var, Sx2_bt_2_mse, Sx2_bt_2_total_bias, Sx2_bt_2_total_var, Sx2_bt_2_total_mse = get_all_stats(
     Sx2_bt_2, Sx2_analytic)
 
-##############
-# plots
+########################################################################
+#                                Plots
+########################################################################
 
-# q2 plot
+########################################################################
+#                         Question 2 - Plots
+#                    Correlogram and Periodegram
+########################################################################
+
 fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 10))
 fig.suptitle(
     r'$\bar{S}_{x1}$ and $\bar{S}_{x2}$ Estimations with the Correlogram and Periodegram methods')
@@ -161,7 +201,11 @@ plt.subplots_adjust(wspace=0.4,
                     hspace=0.4)
 plt.savefig('pics/q2.png')
 plt.close()
-# q3 plot
+
+########################################################################
+#                         Question 3 - Plots
+#                               Sx1 bar
+########################################################################
 
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 fig.suptitle(r'$\bar{S}_{x1}$ Estimation for Mc'+f'={Mc}')
@@ -187,6 +231,11 @@ plt.legend()
 plt.savefig('pics/q3_sx1_bar.png')
 plt.close()
 
+########################################################################
+#                         Question 3 - Plots
+#                               Sx1 Bias
+########################################################################
+
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 fig.suptitle(r'$B(e^{j\omega})$ for Mc'+f'={Mc}')
 ax1.set_xlabel(r'$\omega$')
@@ -208,6 +257,11 @@ ax1.plot(w_M, Sx1_welch_64_bias,
 plt.legend()
 plt.savefig('pics/q3_sx1_bias.png')
 plt.close()
+
+########################################################################
+#                         Question 3 - Plots
+#                            Sx1 Variance
+########################################################################
 
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 fig.suptitle(r'$Var(e^{j\omega})$ for Mc'+f'={Mc}')
@@ -231,6 +285,10 @@ plt.legend()
 plt.savefig('pics/q3_sx1_var.png')
 plt.close()
 
+########################################################################
+#                         Question 3 - Plots
+#                              Sx1 MSE
+########################################################################
 
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 fig.suptitle(r'$MSE(e^{j\omega})$for Mc'+f'={Mc}')
@@ -257,7 +315,10 @@ plt.savefig('pics/q3_sx1_mse.png')
 plt.close()
 
 
-# x2
+########################################################################
+#                         Question 3 - Plots
+#                               Sx2 bar
+########################################################################
 
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 fig.suptitle(r'$\bar{S}_{x2}$ Estimation for Mc'+f'={Mc}')
@@ -283,6 +344,10 @@ plt.legend()
 plt.savefig('pics/q3_sx2_bar.png')
 plt.close()
 
+########################################################################
+#                         Question 3 - Plots
+#                               Sx2 Bias
+########################################################################
 
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 fig.suptitle(r'$B(e^{j\omega})$ for Mc'+f'={Mc}')
@@ -306,6 +371,10 @@ plt.legend()
 plt.savefig('pics/q3_sx2_bias.png')
 plt.close()
 
+########################################################################
+#                         Question 3 - Plots
+#                            Sx1 Variance
+########################################################################
 
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 fig.suptitle(r'$Var(e^{j\omega})$ for Mc'+f'={Mc}')
@@ -328,6 +397,11 @@ ax1.plot(w_M, Sx2_welch_64_var,
 plt.legend()
 plt.savefig('pics/q3_sx2_var.png')
 plt.close()
+
+########################################################################
+#                         Question 3 - Plots
+#                              Sx1 MSE
+########################################################################
 
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
 fig.suptitle(r'$MSE(e^{j\omega})$for Mc'+f'={Mc}')
@@ -353,8 +427,9 @@ plt.legend()
 plt.savefig('pics/q3_sx2_mse.png')
 plt.close()
 
-
-# Q4 prints
+########################################################################
+#                             Question 4 
+########################################################################
 
 x1_B_data = {'Sx1 Periodegram': Sx1_per_total_bias,
              'Sx1 Correlogram': Sx1_cor_total_bias,
@@ -409,6 +484,12 @@ x2_MSE_data = {'Sx2 Periodegram': Sx2_per_total_mse,
                'Sx2 Bartlet_64': Sx2_bartlet_64_total_mse,
                'Sx2 Welch_16': Sx2_welch_16_total_mse,
                'Sx2 Welch_64': Sx2_welch_64_total_mse}
+
+########################################################################
+#                         Question 4 - Plots
+#                         Average Parameters
+########################################################################
+
 fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(
     nrows=3, ncols=2, figsize=(10, 10))
 fig.suptitle(
@@ -442,3 +523,15 @@ plt.subplots_adjust(wspace=0.4,
                     hspace=1.0)
 plt.savefig('pics/q4.png')
 plt.close()
+
+
+#    _________  ________  ___  ___       ___          ________             ________  ___  ___       ___     
+#   |\___   ___\\_____  \|\  \|\  \     |\  \        |\   __  \           |\   ____\|\  \|\  \     |\  \    
+#   \|___ \  \_|\|___/  /\ \  \ \  \    \ \  \       \ \  \|\  \  /\      \ \  \___|\ \  \ \  \    \ \  \   
+#        \ \  \     /  / /\ \  \ \  \    \ \  \       \ \__     \/  \      \ \  \  __\ \  \ \  \    \ \  \  
+#         \ \  \   /  /_/__\ \  \ \  \____\ \  \       \|_/  __     /|      \ \  \|\  \ \  \ \  \____\ \  \ 
+#          \ \__\ |\________\ \__\ \_______\ \__\        /  /_|\   / /       \ \_______\ \__\ \_______\ \__\
+#           \|__|  \|_______|\|__|\|_______|\|__|       /_______   \/         \|_______|\|__|\|_______|\|__|
+#                                                       |_______|\__\                                       
+#                                                               \|__|                                       
+                                                                                                
